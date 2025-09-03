@@ -38,7 +38,7 @@ class TestConfig:
         config = Config()
         config.load_configuration("TEST_ENV_VAR")
 
-        assert config._loaded_configuration["TEST_ENV_VAR"] == "test_value"
+        assert config.get_value("TEST_ENV_VAR") == "test_value"
 
     @patch.dict(os.environ, {"TEST_INT_VAR": "42"})
     def test_load_configuration_with_factory(self):
@@ -46,14 +46,14 @@ class TestConfig:
         config = Config()
         config.load_configuration("TEST_INT_VAR", factory=int)
 
-        assert config._loaded_configuration["TEST_INT_VAR"] == 42
+        assert config.get_value("TEST_INT_VAR") == 42
 
     def test_load_configuration_with_default(self):
         """Test loading configuration with a default value when env var is not set."""
         config = Config()
         config.load_configuration("NON_EXISTENT_VAR", default="default_value")
 
-        assert config._loaded_configuration["NON_EXISTENT_VAR"] == "default_value"
+        assert config.get_value("NON_EXISTENT_VAR") == "default_value"
 
     def test_load_configuration_missing_raises_error(self):
         """Test that loading a missing configuration without default raises KeyError."""
@@ -104,19 +104,25 @@ class TestConfig:
 
     def test_multiple_config_instances(self):
         """Test using multiple config instances with different prefixes."""
-        config1 = Config("app1")
-        config2 = Config("app2")
+        config1 = Config("APP1")
+        config2 = Config("APP2")
 
         with patch.dict(
-            os.environ, {"APP1_VAR": "app1_value", "APP2_VAR": "app2_value"}
+            os.environ,
+            {
+                "APP1_VAR1": "app1_value",
+                "APP2_VAR2": "app2_value",
+            },
         ):
-            config1.load_configuration("APP1_VAR")
-            config2.load_configuration("APP2_VAR")
+            # With prefixes set, load by base key, env keys are PREFIX_KEY
+            config1.load_configuration("VAR1")
+            config2.load_configuration("VAR2")
 
-            assert config1.get_value("APP1_VAR") == "app1_value"
-            assert config2.get_value("APP2_VAR") == "app2_value"
+            assert config1.get_value("VAR1") == "app1_value"
+            assert config2.get_value("VAR2") == "app2_value"
 
-            # All config instances can access all loaded configuration values
-            # regardless of which instance loaded them
-            assert config1.get_value("APP2_VAR") == "app2_value"
-            assert config2.get_value("APP1_VAR") == "app1_value"
+            # Instances should not see each other's values under the new behavior
+            with pytest.raises(KeyError):
+                config1.get_value("VAR2")
+            with pytest.raises(KeyError):
+                config2.get_value("VAR1")

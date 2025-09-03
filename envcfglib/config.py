@@ -29,6 +29,17 @@ class Config:
             cls._instances[key] = instance
         return cls._instances[key]
 
+    def _get_value(self, key: str) -> Any:
+        return self._loaded_configuration[self._key_prefix][key]
+
+    def _set_value(self, key: str, value: Any) -> None:
+        self._loaded_configuration[self._key_prefix][key] = value
+
+    def _get_environ_key(self, key: str) -> str:
+        if self._key_prefix:
+            return f"{self._key_prefix}_{key}".upper()
+        return key.upper()
+
     def load_configuration(
         self,
         key: str,
@@ -51,13 +62,13 @@ class Config:
             KeyError: If the environment variable is not set and no default is provided.
         """
         try:
-            val = environ[key]
+            val = environ[self._get_environ_key(key)]
         except KeyError:
             if default is None:
                 raise
-            self._loaded_configuration[key] = default
+            self._set_value(key, default)
         else:
-            self._loaded_configuration[key] = factory(val)
+            self._set_value(key, factory(val))
 
     def get_value(
         self, key: str, *, factory: Callable[[Any], Any] | None = None
@@ -75,7 +86,7 @@ class Config:
         Raises:
             KeyError: If the key is not found in the loaded configuration.
         """
-        val = self._loaded_configuration[key]
+        val = self._get_value(key)
 
         if factory is None:
             return val
