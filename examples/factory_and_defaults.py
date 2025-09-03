@@ -12,4 +12,6 @@ print(f"DEBUG enabled: {is_debug}")
 
 # Load another value, converting at load-time
 config.load_configuration("RETRIES", factory=int, default=3)
-print(f"Retries: {config.get_value('RETRIES')}  (type: {type(config.get_value('RETRIES')).__name__})")
+print(
+    f"Retries: {config.get_value('RETRIES')}  (type: {type(config.get_value('RETRIES')).__name__})"
+)
