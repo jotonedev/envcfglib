@@ -56,4 +56,4 @@ jobs:
 
       - name: Static type check (ty)
         id: typing_ty
-        run: uv run ty
+        run: uv run ty check envcfglib
