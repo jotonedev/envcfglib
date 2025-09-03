@@ -1,12 +1,11 @@
 from os import environ
-from typing import Any, TypeVar, Self
+from typing import Any, Self
 from collections.abc import Callable
-from dataclasses import field
-from typing import TypedDict
 
 __all__ = [
     "Config",
 ]
+
 
 class Config:
     _instances: dict[str, Self] = dict()
@@ -30,8 +29,13 @@ class Config:
             cls._instances[key] = instance
         return cls._instances[key]
 
-
-    def load_configuration(self, key: str, *, factory: Callable[[str], Any] = str, default: Any | None = None) -> None:
+    def load_configuration(
+        self,
+        key: str,
+        *,
+        factory: Callable[[str], Any] = str,
+        default: Any | None = None,
+    ) -> None:
         """
         Load a configuration value from environment variables.
 
@@ -55,7 +59,9 @@ class Config:
         else:
             self._loaded_configuration[key] = factory(val)
 
-    def get_value(self, key: str, *, factory: Callable[[Any], Any] | None = None) -> Any:
+    def get_value(
+        self, key: str, *, factory: Callable[[Any], Any] | None = None
+    ) -> Any:
         """
         Retrieve a loaded configuration value, optionally applying a factory function.
 
