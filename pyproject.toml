@@ -1,8 +1,23 @@
 [project]
-name = "envconfiglib"
+name = "envcfglib"
 version = "0.1.0"
-description = "Add your description here"
-requires-python = ">=3.13"
+description = "Configuration from environment variables"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.12"
+authors = [{ name = "John Toniutti", email = "john.toniutti@gmail.com" }]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Topic :: Utilities",
+    "Topic :: Software Development :: Libraries :: Python Modules"
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
 dependencies = []
 
 [dependency-groups]
