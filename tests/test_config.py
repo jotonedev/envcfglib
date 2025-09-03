@@ -2,7 +2,7 @@ import os
 import pytest
 from unittest.mock import patch
 
-from envconfiglib.config import Config
+from envcfglib.config import Config
 
 
 class TestConfig:

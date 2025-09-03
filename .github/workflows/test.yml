@@ -52,7 +52,7 @@ jobs:
 
       - name: Static type check (mypy)
         id: typing_mypy
-        run: uv run mypy -p pyown
+        run: uv run mypy -p envcfglib
 
       - name: Static type check (ty)
         id: typing_ty
