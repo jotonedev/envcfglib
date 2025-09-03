@@ -34,3 +34,6 @@ package = true
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+[tool.ruff]
+exclude = ["__init__.py"]
