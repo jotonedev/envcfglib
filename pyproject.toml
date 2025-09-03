@@ -20,6 +20,9 @@ classifiers = [
 
 dependencies = []
 
+[project.urls]
+repository = "https://github.com/jotonedev/envcfglib"
+
 [dependency-groups]
 dev = [
     "mypy>=1.17.1",
