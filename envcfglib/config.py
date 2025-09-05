@@ -29,6 +29,9 @@ class Config:
             cls._instances[key] = instance
         return cls._instances[key]
 
+    def __getattr__(self, name: str):
+        return self._get_value(name)
+
     def _get_value(self, key: str) -> Any:
         return self._loaded_configuration[self._key_prefix][key]
 
