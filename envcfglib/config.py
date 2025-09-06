@@ -49,9 +49,11 @@ class Config:
         *,
         factory: Callable[[str], Any] = str,
         default: Any | None = None,
+        force: bool = False,
     ) -> None:
         """
         Load a configuration value from environment variables.
+        If the values was already loaded, the function call will be ignored unless force=True.
 
         Args:
             key: The environment variable key to load.
@@ -64,6 +66,10 @@ class Config:
         Raises:
             KeyError: If the environment variable is not set and no default is provided.
         """
+
+        if not force and key in self._loaded_configuration[self._key_prefix]:
+            return
+
         try:
             val = environ[self._get_environ_key(key)]
         except KeyError:

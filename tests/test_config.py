@@ -126,3 +126,26 @@ class TestConfig:
                 config1.get_value("VAR2")
             with pytest.raises(KeyError):
                 config2.get_value("VAR1")
+
+    def test_load_configuration_ignores_second_load_without_force(self):
+        """Second call without force should not overwrite already loaded value."""
+        cfg = Config()
+        with patch.dict(os.environ, {"MY_VAR": "1"}):
+            cfg.load_configuration("MY_VAR", factory=int)
+            assert cfg.get_value("MY_VAR") == 1
+        # Change env and attempt to load again without force
+        with patch.dict(os.environ, {"MY_VAR": "2"}, clear=False):
+            cfg.load_configuration("MY_VAR", factory=int)
+        # Should remain the initially loaded value
+        assert cfg.get_value("MY_VAR") == 1
+
+    def test_load_configuration_force_reloads_value(self):
+        """Using force=True should reload and overwrite the value from environment/default."""
+        cfg = Config()
+        # First load with default (env missing)
+        cfg.load_configuration("OTHER_VAR", default=10)
+        assert cfg.get_value("OTHER_VAR") == 10
+        # Now set env and force reload
+        with patch.dict(os.environ, {"OTHER_VAR": "20"}):
+            cfg.load_configuration("OTHER_VAR", factory=int, force=True)
+        assert cfg.get_value("OTHER_VAR") == 20
