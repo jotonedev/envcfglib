@@ -11,16 +11,17 @@ class Config:
     _instances: dict[str, Self] = dict()
 
     _loaded_configuration: dict[str, dict[str, Any]] = dict()
-    _key_prefix: str = ""
+    _prefix_key: str = ""
 
-    def __init__(self, key: str = ""):
+    def __init__(self, prefix_key: str = ""):
         """
         Initialize the Config instance with a specific key prefix.
         Args:
-            key (str): The prefix key for the configuration instance.
+            prefix_key (str): The prefix key for the configuration instance.
         """
-        self._key_prefix = key
-        self._loaded_configuration[key] = dict()
+        self._prefix_key = prefix_key
+        if prefix_key not in self._loaded_configuration:
+            self._loaded_configuration[prefix_key] = dict()
 
     def __new__(cls, key: str = "", *args, **kwargs) -> Self:
         """Singleton pattern implementation to ensure one instance per prefix key."""
@@ -33,14 +34,14 @@ class Config:
         return self._get_value(name)
 
     def _get_value(self, key: str) -> Any:
-        return self._loaded_configuration[self._key_prefix][key]
+        return self._loaded_configuration[self._prefix_key][key]
 
     def _set_value(self, key: str, value: Any) -> None:
-        self._loaded_configuration[self._key_prefix][key] = value
+        self._loaded_configuration[self._prefix_key][key] = value
 
     def _get_environ_key(self, key: str) -> str:
-        if self._key_prefix:
-            return f"{self._key_prefix}_{key}".upper()
+        if self._prefix_key:
+            return f"{self._prefix_key}_{key}".upper()
         return key.upper()
 
     def load_configuration(
@@ -67,7 +68,7 @@ class Config:
             KeyError: If the environment variable is not set and no default is provided.
         """
 
-        if not force and key in self._loaded_configuration[self._key_prefix]:
+        if not force and key in self._loaded_configuration[self._prefix_key]:
             return
 
         try:
